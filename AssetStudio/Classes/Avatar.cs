@@ -235,6 +235,21 @@ namespace AssetStudio
         }
     }
 
+    // TOS: extra type added by their custom Unity build, referenced from AvatarConstant.m_SkeletonRetargetingRig
+    public class RetargetingRig
+    {
+        public uint m_Rig;
+        public int m_Version;
+        public int[] m_RigIndexArray;
+
+        public RetargetingRig(ObjectReader reader)
+        {
+            m_Rig = reader.ReadUInt32();
+            m_Version = reader.ReadInt32();
+            m_RigIndexArray = reader.ReadInt32Array();
+        }
+    }
+
     public class AvatarConstant
     {
         public Skeleton m_AvatarSkeleton;
@@ -249,6 +264,9 @@ namespace AssetStudio
         public Skeleton m_RootMotionSkeleton;
         public SkeletonPose m_RootMotionSkeletonPose;
         public int[] m_RootMotionSkeletonIndexArray;
+        // TOS: fields added by their custom Unity build, between m_RootMotionSkeletonIndexArray and Avatar.m_TOS
+        public RetargetingRig m_SkeletonRetargetingRig;
+        public int[] m_SkeletonRetargetingModeArray;
 
         public AvatarConstant(ObjectReader reader)
         {
@@ -282,6 +300,10 @@ namespace AssetStudio
 
                 m_RootMotionSkeletonIndexArray = reader.ReadInt32Array();
             }
+
+            // TOS: extra fields added by their custom Unity build (see RetargetingRig above)
+            m_SkeletonRetargetingRig = new RetargetingRig(reader);
+            m_SkeletonRetargetingModeArray = reader.ReadInt32Array();
         }
     }
 

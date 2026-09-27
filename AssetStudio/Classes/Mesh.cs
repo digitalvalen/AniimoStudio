@@ -641,6 +641,7 @@ namespace AssetStudio
                     var m_IsReadable = reader.ReadBoolean();
                     var m_KeepVertices = reader.ReadBoolean();
                     var m_KeepIndices = reader.ReadBoolean();
+                    var m_VertexCompressed = reader.ReadBoolean(); // TOS: extra bool added by their custom Unity build
                 }
 
                 if (version.IsTuanjie)
