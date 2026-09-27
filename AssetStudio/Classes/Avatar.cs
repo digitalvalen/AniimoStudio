@@ -235,7 +235,8 @@ namespace AssetStudio
         }
     }
 
-    // TOS: extra type added by their custom Unity build, referenced from AvatarConstant.m_SkeletonRetargetingRig
+    // TOS: extra types added by their custom Unity build, referenced from AvatarConstant.m_SkeletonRetargetingRig
+    // and AvatarConstant.m_SkeletonRetargetingReference
     public class RetargetingRig
     {
         public uint m_Rig;
@@ -247,6 +248,22 @@ namespace AssetStudio
             m_Rig = reader.ReadUInt32();
             m_Version = reader.ReadInt32();
             m_RigIndexArray = reader.ReadInt32Array();
+        }
+    }
+
+    public class SkeletonXReference
+    {
+        public uint m_ID;
+        public Vector3 t;
+        public Quaternion q;
+        public Vector3 s;
+
+        public SkeletonXReference(ObjectReader reader)
+        {
+            m_ID = reader.ReadUInt32();
+            t = reader.ReadVector3();
+            q = reader.ReadQuaternion();
+            s = reader.ReadVector3();
         }
     }
 
@@ -266,7 +283,7 @@ namespace AssetStudio
         public int[] m_RootMotionSkeletonIndexArray;
         // TOS: fields added by their custom Unity build, between m_RootMotionSkeletonIndexArray and Avatar.m_TOS
         public RetargetingRig m_SkeletonRetargetingRig;
-        public int[] m_SkeletonRetargetingModeArray;
+        public SkeletonXReference[] m_SkeletonRetargetingReference;
 
         public AvatarConstant(ObjectReader reader)
         {
@@ -301,9 +318,15 @@ namespace AssetStudio
                 m_RootMotionSkeletonIndexArray = reader.ReadInt32Array();
             }
 
-            // TOS: extra fields added by their custom Unity build (see RetargetingRig above)
+            // TOS: extra fields added by their custom Unity build (see RetargetingRig/SkeletonXReference above)
             m_SkeletonRetargetingRig = new RetargetingRig(reader);
-            m_SkeletonRetargetingModeArray = reader.ReadInt32Array();
+
+            int referenceCount = reader.ReadInt32();
+            m_SkeletonRetargetingReference = new SkeletonXReference[referenceCount];
+            for (int i = 0; i < referenceCount; i++)
+            {
+                m_SkeletonRetargetingReference[i] = new SkeletonXReference(reader);
+            }
         }
     }
 

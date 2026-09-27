@@ -640,6 +640,77 @@ namespace AssetStudio
         }
     }
 
+    // TOS: extra compressed-clip formats added by their custom Unity build, referenced from Clip
+    public class QuantizedClip
+    {
+        public uint m_FrameCount;
+        public uint m_CurveCount;
+        public float m_SampleRate;
+        public float m_BeginTime;
+        public uint m_NumStatic;
+        public uint m_NumDynamic;
+        public uint m_TypeOffset;
+        public uint m_IndicesOffset;
+        public uint m_StaticOffset;
+        public uint m_FrameSize;
+        public uint m_DynamicOffset;
+        public byte[] m_Data;
+
+        public QuantizedClip(ObjectReader reader)
+        {
+            m_FrameCount = reader.ReadUInt32();
+            m_CurveCount = reader.ReadUInt32();
+            m_SampleRate = reader.ReadSingle();
+            m_BeginTime = reader.ReadSingle();
+            m_NumStatic = reader.ReadUInt32();
+            m_NumDynamic = reader.ReadUInt32();
+            m_TypeOffset = reader.ReadUInt32();
+            m_IndicesOffset = reader.ReadUInt32();
+            m_StaticOffset = reader.ReadUInt32();
+            m_FrameSize = reader.ReadUInt32();
+            m_DynamicOffset = reader.ReadUInt32();
+            m_Data = reader.ReadUInt8Array();
+        }
+    }
+
+    public class PredictClip
+    {
+        public uint m_FrameCount;
+        public uint m_CurveCount;
+        public float m_SampleRate;
+        public float m_BeginTime;
+        public uint m_NumStatic;
+        public uint m_NumDynamic;
+        public uint m_TypeOffset;
+        public uint m_IndicesOffset;
+        public uint m_StaticOffset;
+        public uint m_RangeOffset;
+        public uint m_BitCntOffset;
+        public uint m_PredictBlockOffset;
+        public uint m_ValueOffsetPerCurveOffset;
+        public uint m_ValueOffset;
+        public byte[] m_Data;
+
+        public PredictClip(ObjectReader reader)
+        {
+            m_FrameCount = reader.ReadUInt32();
+            m_CurveCount = reader.ReadUInt32();
+            m_SampleRate = reader.ReadSingle();
+            m_BeginTime = reader.ReadSingle();
+            m_NumStatic = reader.ReadUInt32();
+            m_NumDynamic = reader.ReadUInt32();
+            m_TypeOffset = reader.ReadUInt32();
+            m_IndicesOffset = reader.ReadUInt32();
+            m_StaticOffset = reader.ReadUInt32();
+            m_RangeOffset = reader.ReadUInt32();
+            m_BitCntOffset = reader.ReadUInt32();
+            m_PredictBlockOffset = reader.ReadUInt32();
+            m_ValueOffsetPerCurveOffset = reader.ReadUInt32();
+            m_ValueOffset = reader.ReadUInt32();
+            m_Data = reader.ReadUInt8Array();
+        }
+    }
+
     public class ValueConstant
     {
         public uint m_ID;
@@ -735,6 +806,9 @@ namespace AssetStudio
         public StreamedClip m_StreamedClip;
         public DenseClip m_DenseClip;
         public ConstantClip m_ConstantClip;
+        // TOS: extra clip formats added by their custom Unity build (see QuantizedClip/PredictClip above)
+        public QuantizedClip m_QuantizedClip;
+        public PredictClip m_PredictClip;
         public ValueArrayConstant m_Binding;
         public ACLClip m_ACLClip;
 
@@ -749,6 +823,9 @@ namespace AssetStudio
             {
                 m_ConstantClip = new ConstantClip(reader);
             }
+            // TOS: extra clip formats always present in their custom Unity build
+            m_QuantizedClip = new QuantizedClip(reader);
+            m_PredictClip = new PredictClip(reader);
             if (version < (2018, 3)) //2018.3 down
             {
                 m_Binding = new ValueArrayConstant(reader);
